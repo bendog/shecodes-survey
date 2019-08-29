@@ -41,27 +41,26 @@ class Question(object):
 
 
 class Section(object):
-    def __init__(self, desctiption, qualifying_question, following_questions):
+    def __init__(self, desctiption, questions):
         self.description = desctiption
-        self.qualifying_question = qualifying_question
-        self.following_questions = []
-        self.add_following_questions(following_questions)
-        self.active_question = None
+        self.questions = []
+        self.add_questions(questions)
+        self.active_question = -1  # set the initial question to -1 so it becomes 0, this is ugly, it should be handled lower down
 
     def __str__(self):
         return self.description
 
-    def add_following_questions(self, following_questions):
-        for question in following_questions:
-            self.following_questions.append(question)
+    def add_questions(self, questions):
+        """ add the question to the seciton """
+        for question in questions:
+            # check that question is a question
+            if isinstance(question, Question):
+                self.questions.append(question)
 
     def ask_question(self):
-        if self.active_question is None:
-            self.active_question = -1
-            return self.qualifying_question
         self.active_question += 1
         try:
-            return self.following_questions[self.active_question]
+            return self.questions[self.active_question]
         except IndexError:
             return None
     
@@ -95,29 +94,28 @@ survey = Survey([
         desctiption="""
 Welcome to this survey
 TODO write a description here""",
-        qualifying_question=Question(
-            'Do you like meerkats?', 
-            answers={
-                'Obviously.': True,
-                'No They are Lame.': False
-            }
-        ),
-        following_questions=[
-
+        questions=[
+            Question(
+                'Do you like meerkats?', 
+                answers={
+                    'Obviously.': True,
+                    'No They are Lame.': False
+                }
+            ),
         ]
     ),
     Section(
         desctiption="""
 ================= Taylor Swift =================
 This section is all about Taylor Swift, the singer-songwriter and cat mum to Meredith, Oliva and Benji.""",
-        qualifying_question=Question(
-            'Do you like Taylor Swift?',
-            answers={
-                'Obviously.': True,
-                'No she is lame.': False,
-            }
-        ),
-        following_questions=[
+        questions=[
+            Question(
+                'Do you like Taylor Swift?',
+                answers={
+                    'Obviously.': True,
+                    'No she is lame.': False,
+                }
+            ),
             Question(
                 'What is your favourite Taylor Swift song?',
                 answers={
